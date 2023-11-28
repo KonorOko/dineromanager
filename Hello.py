@@ -1,51 +1,55 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import streamlit as st
-from streamlit.logger import get_logger
+import pandas as pd
+#from sqlalchemy.sql import text
+from components.header import Header
+from components.footer import Footer
 
-LOGGER = get_logger(__name__)
+
+class Manager:
+    def __init__(self) -> None:
+        def conection_database():
+          try:
+            ssl_args = {'ssl': {'ca': 'cacert.pem'}}
+            self.conn = st.connection("mydb", type="sql", autocommit=False,
+                              dialect = st.secrets.connections.mydb.dialect,
+                              username= st.secrets.connections.mydb.username,
+                              password = st.secrets.connections.mydb.password,
+                              host = st.secrets.connections.mydb.host,
+                              database = st.secrets.connections.mydb.database,
+                              connect_args=ssl_args)
+            return
+          except:
+            pass
+    
+    def builder(self):
+      st.text("Programa para administrar los ingresos de dinero")
+      st.text_input("Ingresos", placeholder="Monto total del dinero")
+      st.text_input("Nombre", placeholder="Nombre de la persona que dio el dinero")
+
+      st.dataframe()
 
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
-
-    st.write("# Welcome to Streamlit! 👋")
-
-    st.sidebar.success("Select a demo above.")
-
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
+def main():
+    # settings
+    st.set_page_config(page_title="Add to DB", 
+                       layout='wide', 
+                       initial_sidebar_state="collapsed")
+    st.write('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+    hide_footer_style = """
+    <style>
+    .reportview-container .main footer {visibility: hidden;}    
     """
-    )
+    st.markdown(hide_footer_style, unsafe_allow_html=True)
 
+    # instances
+    header: Header = Header("Administrador de dinero")
+    footer: Footer = Footer()
+    manager: Manager = Manager()
+
+
+    header.builder()
+    manager.builder()
+    footer.builder()
 
 if __name__ == "__main__":
-    run()
+    main()
