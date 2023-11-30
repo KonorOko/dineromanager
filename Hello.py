@@ -75,9 +75,14 @@ class Manager:
       cantidad = st.text_input("Ingresos", placeholder="Monto total del dinero")
       motivo = st.text_input("Motivo", placeholder="Ingrese el motivo del monto")
 
-      col1,col2,col3 = st.columns([0.3, 0.3, 0.3])
+      col1,col2,col3,col4 = st.columns([0.25, 0.25, 0.25, 0.25])
       with col2:
-        button_data = st.button("Agregar monto", use_container_width=True, type="primary")
+        button_data = st.button("Agregar monto", type="primary")
+      with col3:
+         actualizar = st.button("Actualizar", type="primary")
+      if actualizar:
+         st.cache_data.clear()
+         st.rerun()
       if button_data:
         try:
           date_mexico = get_date()
