@@ -98,7 +98,14 @@ class Manager:
       
       data = get_data(self.conn, "SELECT * FROM Dinero")
       data["Fecha"] = pd.to_datetime(data["Fecha"], format='%Y-%m-%d').dt.date
-      st.dataframe(data, hide_index=True, use_container_width=True)
+
+      st.divider()
+
+      filters = st.multiselect("Filtro", data["Fecha"].unique())
+      if filters:
+         st.dataframe(data[data["Fecha"].isin(filters)], hide_index=True, use_container_width=True)
+      else:
+         st.dataframe(data, hide_index=True, use_container_width=True)
 
       st.divider()
 
