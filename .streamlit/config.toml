@@ -1,0 +1,9 @@
+[ui]
+hideTopBar = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base="dark"
+primaryColor="#3361f6"
