@@ -4,7 +4,12 @@ import pandas as pd
 from components.header import Header
 from components.footer import Footer
 
-
+"""
+database: project
+username: 1m2kyjelmm79d5aurtsf
+host: aws.connect.psdb.cloud
+password: pscale_pw_PJRNr4brLtlrQPHrwk7qA7nBQdntx92scxw3ufSpsu8
+"""
 class Manager:
     def __init__(self) -> None:
         def conection_database():
