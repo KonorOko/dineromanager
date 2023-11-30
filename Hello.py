@@ -60,6 +60,11 @@ def delete_data(conn, query, params: dict = None):
             st.error("Failed to delete data")
             raise
 
+def get_date():
+   zona_horaria_mexico = pytz.timezone('America/Mexico_City')
+   date_mexico = datetime.now(zona_horaria_mexico).strftime("%Y-%m-%d")
+   return date_mexico
+
 
 class Manager:
     def __init__(self) -> None:
@@ -75,8 +80,7 @@ class Manager:
         button_data = st.button("Agregar monto", use_container_width=True, type="primary")
       if button_data:
         try:
-          zona_horaria_mexico = pytz.timezone('America/Mexico_City')
-          date_mexico = datetime.now(zona_horaria_mexico).strftime("%Y/%m/%d")
+          date_mexico = get_date()
           insert_data(self.conn, 
                       text("INSERT INTO Dinero (Cantidad, Motivo, Fecha) VALUES (:Cantidad, :Motivo, :Fecha)"),
                       data={"Cantidad": float(cantidad), "Motivo": motivo, "Fecha": date_mexico})
@@ -87,10 +91,26 @@ class Manager:
            print(e)
            st.toast("No se pudo agregar la información a la base de datos")
       
+      data = get_data(self.conn, "SELECT * FROM Dinero")
+      data["Fecha"] = pd.to_datetime(data["Fecha"], format='%Y-%m-%d').dt.date
+      st.dataframe(data, hide_index=True, use_container_width=True)
 
-      st.dataframe(get_data(self.conn, "SELECT * FROM Dinero"),
-                   hide_index=True, use_container_width=True)
-      
+      st.divider()
+      fecha_hoy = pd.to_datetime(get_date()).date()
+      st.subheader("Data Info", help="Flecha: Indica el cambio diario")
+      spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
+      data_today = data[data["Fecha"] == fecha_hoy]
+      with col1:
+        total = data["Cantidad"].sum()
+        balance_today = data_today["Cantidad"].sum()
+        st.metric("Balance Total", total, balance_today)
+      with col2:
+         count_reg = data.shape[0]
+         count_reg_today = data_today.shape[0]
+         st.metric("Número de montos", count_reg, count_reg_today)
+      with col3:
+         prom_today = data_today["Cantidad"].mean()
+         st.metric("Promedio de ingresos", prom_today)
       st.divider()
       st.text("Elimina un registro")
       id_reg = st.text_input("ID del monto a eliminar", placeholder="Ingrese número de regístro")
@@ -102,6 +122,7 @@ class Manager:
           st.cache_data.clear()
           st.rerun()
           st.toast("Se elimino el regístro correctamente")
+          st.rerun()
         except:
            st.toast("No se pudo eliminar el regístro")
 
