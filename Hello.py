@@ -139,9 +139,7 @@ class Manager:
           delete_data(self.conn, text("DELETE FROM Dinero WHERE ID_Dinero = :ID_Dinero"),
                       params={"ID_Dinero": id_reg})
           st.cache_data.clear()
-          st.rerun()
           st.toast("Se elimino el regístro correctamente")
-          st.rerun()
         except:
            st.cache_data.clear()
            st.rerun()
