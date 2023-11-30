@@ -143,7 +143,8 @@ class Manager:
           st.toast("Se elimino el regístro correctamente")
           st.rerun()
         except:
-           pass
+           st.cache_data.clear()
+           st.rerun()
 
       st.divider()
 
