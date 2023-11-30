@@ -74,7 +74,8 @@ class Manager:
       st.text("Programa para administrar los ingresos de dinero")
       cantidad = st.text_input("Ingresos", placeholder="Monto total del dinero")
       motivo = st.text_input("Motivo", placeholder="Ingrese el motivo del monto")
-
+      with st.expander("Avanzado"):
+         fecha = st.date_input("Fecha", value=None, format="DD/MM/YYYY")
       col1,col2,spacer,col3,col4 = st.columns([0.23, 0.25, 0.04, 0.25, 0.23])
       with col2:
         button_data = st.button("Agregar", type="primary", use_container_width=True)
@@ -85,7 +86,10 @@ class Manager:
          st.rerun()
       if button_data:
         try:
-          date_mexico = get_date()
+          if fecha is not None:
+            date_mexico = fecha
+          else:
+            date_mexico = get_date()
           insert_data(self.conn, 
                       text("INSERT INTO Dinero (Cantidad, Motivo, Fecha) VALUES (:Cantidad, :Motivo, :Fecha)"),
                       data={"Cantidad": float(cantidad), "Motivo": motivo, "Fecha": date_mexico})
@@ -97,7 +101,7 @@ class Manager:
            st.toast("No se pudo agregar la información a la base de datos")
       
       data = get_data(self.conn, "SELECT * FROM Dinero")
-      data["Fecha"] = pd.to_datetime(data["Fecha"], format='%Y-%m-%d').dt.date
+      data["Fecha"] = pd.to_datetime(data["Fecha"], format='%d-%m-%Y').dt.date
 
       st.divider()
 
@@ -123,7 +127,7 @@ class Manager:
          st.metric("Número de montos", count_reg, count_reg_today)
       with col3:
          prom_today = data_today["Cantidad"].mean()
-         st.metric("Promedio de ingresos", prom_today)
+         st.metric("Promedio de ingresos", F"{prom_today: .1f}")
 
       st.divider()
 
@@ -140,6 +144,12 @@ class Manager:
           st.rerun()
         except:
            st.toast("No se pudo eliminar el regístro")
+
+      st.divider()
+
+      st.subheader("Ingresos vs Tiempo")
+      data_group = data.groupby(["Fecha"]).sum().reset_index()
+      st.line_chart(data_group, x="Fecha", y="Cantidad")
 
 def main():
     # settings
