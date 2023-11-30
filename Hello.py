@@ -75,11 +75,11 @@ class Manager:
       cantidad = st.text_input("Ingresos", placeholder="Monto total del dinero")
       motivo = st.text_input("Motivo", placeholder="Ingrese el motivo del monto")
 
-      col1,col2,col3,col4 = st.columns([0.25, 0.25, 0.25, 0.25])
+      col1,col2,spacer,col3,col4 = st.columns([0.23, 0.25, 0.04, 0.25, 0.23])
       with col2:
-        button_data = st.button("Agregar", type="primary")
+        button_data = st.button("Agregar", type="primary", use_container_width=True)
       with col3:
-         actualizar = st.button("Actualizar", type="primary")
+         actualizar = st.button("Actualizar", type="primary", use_container_width=True)
       if actualizar:
          st.cache_data.clear()
          st.rerun()
@@ -101,8 +101,9 @@ class Manager:
       st.dataframe(data, hide_index=True, use_container_width=True)
 
       st.divider()
-      fecha_hoy = pd.to_datetime(get_date()).date()
+
       st.subheader("Data Info", help="Flecha: Indica el cambio diario")
+      fecha_hoy = pd.to_datetime(get_date()).date()
       spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
       data_today = data[data["Fecha"] == fecha_hoy]
       with col1:
@@ -116,8 +117,10 @@ class Manager:
       with col3:
          prom_today = data_today["Cantidad"].mean()
          st.metric("Promedio de ingresos", prom_today)
+
       st.divider()
-      st.text("Elimina un registro")
+
+      st.subheader("Elimina un registro")
       id_reg = st.text_input("ID del monto a eliminar", placeholder="Ingrese número de regístro")
       delete_button = st.button("Eliminar", type="primary")
       if delete_button:
