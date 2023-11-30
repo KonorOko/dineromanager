@@ -77,7 +77,7 @@ class Manager:
 
       col1,col2,col3,col4 = st.columns([0.25, 0.25, 0.25, 0.25])
       with col2:
-        button_data = st.button("Agregar monto", type="primary")
+        button_data = st.button("Agregar", type="primary")
       with col3:
          actualizar = st.button("Actualizar", type="primary")
       if actualizar:
