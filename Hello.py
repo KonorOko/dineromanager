@@ -134,7 +134,7 @@ class Manager:
         # first row
         total = data["Cantidad"].sum()
         balance_today = data_today["Cantidad"].sum()
-        st.metric("Balance Total", f"${total: .2f}", f"${balance_today: .2f}")
+        st.metric("Balance Total", f"${total: ,.2f}", f"${balance_today: ,.2f}")
 
         # second row
 
@@ -144,7 +144,7 @@ class Manager:
          st.metric("Número de montos", count_reg, count_reg_today)
       with col3:
          prom_today = data_today["Cantidad"].mean()
-         st.metric("Promedio de ingresos", F"${prom_today: .2f}")
+         st.metric("Promedio de ingresos", F"${prom_today: ,.2f}")
 
       st.divider()
 
