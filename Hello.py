@@ -163,7 +163,7 @@ def main():
     st.markdown(hide_footer_style, unsafe_allow_html=True)
 
     # instances
-    header: Header = Header("Main Page")
+    header: Header = Header("Manager")
     footer: Footer = Footer()
     manager: Manager = Manager()
 
