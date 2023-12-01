@@ -130,6 +130,7 @@ class Manager:
       fecha_hoy = pd.to_datetime(get_date()).date()
       spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
       data_today = data[data["Fecha"] == fecha_hoy]
+
       with col1:
         # first row
         total = data["Cantidad"].sum()
