@@ -71,7 +71,11 @@ class Manager:
         self.conn = connect_database()
     
     def builder(self):
-      st.text("Programa para administrar los ingresos de dinero")
+      col1t, col2t = st.columns([0.8, 0.2])
+      with col1t:
+        st.text("Programa para administrar los ingresos de dinero.")
+      with col2t:
+         st.caption(str(get_date()))
       cantidad = st.text_input("Ingresos", placeholder="Monto total del dinero")
       motivo = st.text_input("Motivo", placeholder="Ingrese el motivo del monto")
       with st.expander("Avanzado"):
@@ -105,9 +109,18 @@ class Manager:
 
       st.divider()
 
-      filters = st.multiselect("Filtro", data["Fecha"].unique())
-      if filters:
-         st.dataframe(data[data["Fecha"].isin(filters)], hide_index=True, use_container_width=True)
+      with st.expander("Filtros"):
+        st.markdown("**Fechas**")
+        col1, col2 = st.columns(2)
+        with col1:
+           min_date = st.date_input("Mínimo", value=None)
+        with col2:
+           max_date = st.date_input("Máximo", value=None)
+
+      if min_date and not max_date:
+         st.dataframe(data[data["Fecha"] > min_date], hide_index=True, use_container_width=True)
+      elif max_date and not min_date:
+         st.dataframe(data[data["Fecha"] < max_date], hide_index=True, use_container_width=True)
       else:
          st.dataframe(data, hide_index=True, use_container_width=True)
 
@@ -118,16 +131,20 @@ class Manager:
       spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
       data_today = data[data["Fecha"] == fecha_hoy]
       with col1:
+        # first row
         total = data["Cantidad"].sum()
         balance_today = data_today["Cantidad"].sum()
-        st.metric("Balance Total", total, balance_today)
+        st.metric("Balance Total", f"${total: .2f}", f"${balance_today: .2f}")
+
+        # second row
+
       with col2:
          count_reg = data.shape[0]
          count_reg_today = data_today.shape[0]
          st.metric("Número de montos", count_reg, count_reg_today)
       with col3:
          prom_today = data_today["Cantidad"].mean()
-         st.metric("Promedio de ingresos", F"{prom_today: .1f}")
+         st.metric("Promedio de ingresos", F"${prom_today: .2f}")
 
       st.divider()
 
