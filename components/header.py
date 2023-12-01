@@ -7,7 +7,7 @@ class Header:
     def builder(self):
         col1, col2, col3 = st.columns([0.11, 0.58, 0.11])
         with col1:
-            st.text("Ganthaus - Dashboard")
+            st.text("Ganthaus")
             
         with col2:
             st.divider()
