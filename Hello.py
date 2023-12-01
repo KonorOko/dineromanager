@@ -126,26 +126,41 @@ class Manager:
 
       st.divider()
 
-      st.subheader("Data Info", help="Flecha: Indica el cambio diario")
+      st.subheader("Data Info")
       fecha_hoy = pd.to_datetime(get_date()).date()
-      spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
       data_today = data[data["Fecha"] == fecha_hoy]
+      st.markdown("#### Mensual", help="Flecha: Indica el cambio diario")
+      spacer1, col1, spacer2, col2, spacer3, col3, spacer4 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
 
       with col1:
-        # first row
-        total = data["Cantidad"].sum()
+        data_mensual = data[pd.to_datetime(data["Fecha"]).dt.month == fecha_hoy.month]
+        balance_mesual = data_mensual["Cantidad"].sum()
         balance_today = data_today["Cantidad"].sum()
-        st.metric("Balance Total", f"${total: ,.2f}", f"${balance_today: ,.2f}")
-
-        # second row
+        st.metric("Balance", f"${balance_mesual: ,.2f}", f"${balance_today: ,.2f}")
 
       with col2:
          count_reg = data.shape[0]
+         count_mensual = data_mensual.shape[0]
          count_reg_today = data_today.shape[0]
-         st.metric("Número de montos", count_reg, count_reg_today)
+         st.metric("Numero de montos", count_mensual, count_reg_today)
+
       with col3:
-         prom_today = data_today["Cantidad"].mean()
-         st.metric("Promedio de ingresos", F"${prom_today: ,.2f}")
+         prom_mensual = data_mensual["Cantidad"].mean()
+         prom_data = data["Cantidad"].mean()
+         st.metric("Promedio de ingresos", f"${prom_mensual: ,.2f}")
+
+      st.markdown("#### Anual", help="Flecha: Indica el cambio mensual")
+      spacer1_2, col1_2, spacer2_2, col2_2, spacer_2, col3_2, spacer4_2 = st.columns([0.03, 0.3, 0.03, 0.3, 0.03, 0.3, 0.03])
+      with col1_2:
+        
+        total = data["Cantidad"].sum()
+        st.metric("Balance Total", f"${total: ,.2f}", f"${balance_mesual: ,.2f}")
+
+      with col2_2:
+         st.metric("Número de montos", count_reg, count_mensual)
+
+      with col3_2:
+         st.metric("Promedio de ingresos", f"${prom_data: ,.2f}")
 
       st.divider()
 
@@ -168,23 +183,33 @@ class Manager:
       data_group = data.groupby(["Fecha"]).sum().reset_index()
       st.line_chart(data_group, x="Fecha", y="Cantidad")
 
+      st.divider()
+
+      st.subheader("No. de montos vs tiempo")
+      data_group["Numero de montos"] = data_group["Cantidad"].cumsum()
+      st.line_chart(data_group, x="Fecha", y="Numero de montos")
+
 def main():
     # settings
     st.set_page_config(page_title="Add to DB", 
                        layout='wide', 
                        initial_sidebar_state="collapsed")
     st.write('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
-    hide_footer_style = """
+    style = """
     <style>
+    div[data-testid="stMetricValue"] > div {
+    box-shadow: 0 0 1.5px #cccccc;
+    padding: 10px;
+    border-radius: 10px;
+    }
     .reportview-container .main footer {visibility: hidden;}    
     """
-    st.markdown(hide_footer_style, unsafe_allow_html=True)
+    st.markdown(style, unsafe_allow_html=True)
 
     # instances
     header: Header = Header("Manager")
     footer: Footer = Footer()
     manager: Manager = Manager()
-
 
     header.builder()
     manager.builder()
