@@ -186,7 +186,7 @@ class Manager:
       st.divider()
 
       st.subheader("No. de montos vs tiempo")
-      data_group["Numero de montos"] = data_group["Cantidad"].cumsum()
+      data_group['Numero de montos'] = data.groupby('Fecha')['Cantidad'].count().reset_index()['Cantidad']
       st.line_chart(data_group, x="Fecha", y="Numero de montos")
 
 def main():
